@@ -8,9 +8,15 @@ apt-get install docker.io git -y
 docker pull jamescarscadden/vsts-agent-rails
 docker pull postgres
 
-# Run docker containers
+# Run postgres docker container
 docker run --name railsPostgres -e POSTGRES_PASSWORD=${1} -d postgres
-docker run -i --link railsPostgres:postgres --rm postgres sh -c 'exec psql -h "$POSTGRES_PORT_5432_TCP_ADDR" -p "$POSTGRES_PORT_5432_TCP_PORT" -U postgres -c "CREATE ROLE agentUsr WITH LOGIN CREATEDB PASSWORD ${2}"'
+
+# Create an agent user in postgres
+pass="PASSWORD '${2}'"
+conn="postgresql://postgres:${1}@$POSTGRES_PORT_5432_TCP_ADDR:$POSTGRES_PORT_5432_TCP_PORT"
+docker run -i --link railsPostgres:postgres --rm postgres sh -c 'exec psql $conn -c "CREATE ROLE agentUsr WITH LOGIN CREATEDB $pass;"'
+
+# Run agent docker container
 docker run -i --name vstsagent --link railsPostgres:postgres \
     -e VSTS_CONFIG_USERNAME=${3} \
     -e VSTS_CONFIG_PASSWORD=${4} \
