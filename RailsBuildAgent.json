@@ -103,7 +103,7 @@
     "installloc": "https://raw.githubusercontent.com/JamesCarscadden/arm-agent-rails/master/",
     "bootstrapfile": "install.sh",
     "bootstrapuri": "[concat(variables('installloc'), variables('bootstrapfile'))]",
-    "bootstrapcmd": "[concat('sh ', variables('bootstrapfile'), parameters('postgresPassword'), ' ', parameters('postgresUserPassword'), ' ', parameters('vstsUsername'), ' ', parameters('vstsPassword'), ' ', parameters('vstsURL'), ' ', parameters('vstsAgentName'))]"
+    "bootstrapcmd": "[concat('sh ', variables('bootstrapfile'), ' ', parameters('postgresPassword'), ' ', parameters('postgresUserPassword'), ' ', parameters('vstsUsername'), ' ', parameters('vstsPassword'), ' ', parameters('vstsURL'), ' ', parameters('vstsAgentName'))]"
   },
   "resources": [
     {
