@@ -1,0 +1,36 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vmName": {
+      "value": "<change me>"
+    },
+    "adminUsername": {
+      "value": "<change me>"
+    },
+    "adminPassword": {
+      "value": "<change me>"
+    },
+    "dnsNameForPublicIP": {
+      "value": "<change me>"
+    },
+    "postgresPassword": {
+      "value": "<change me>"
+    },
+    "postgresUserPassword": {
+      "value": "<change me>"
+    },
+    "vstsUsername": {
+      "value": "<change me>"
+    },
+    "vstsPassword": {
+      "value": "<change me>"
+    },
+    "vstsURL": {
+      "value": "<change me>"
+    },
+    "vstsAgentName": {
+      "value": "<change me>"
+    }
+  }
+}

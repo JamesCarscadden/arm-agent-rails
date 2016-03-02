@@ -70,7 +70,7 @@
     "apiVersion": "2015-06-15",
     "imagePublisher": "Canonical",
     "imageOffer": "UbuntuServer",
-    "imageSKU": "14.04.3-LTS",
+    "imageSKU": "14.04.4-LTS",
     "imageVersion": "latest",
     "OSDiskName": "osdisk",
     "nicName": "vmnic",
@@ -103,7 +103,7 @@
     "installloc": "https://raw.githubusercontent.com/JamesCarscadden/arm-agent-rails/master/",
     "bootstrapfile": "install.sh",
     "bootstrapuri": "[concat(variables('installloc'), variables('bootstrapfile'))]",
-    "bootstrapcmd": "[concat('sh ', variables('tfsbootstrapfile'), parameters('postgresPassword'), ' ', parameters('postgresUserPassword'), ' ', parameters('vstsUsername'), ' ', parameters('vstsPassword'), ' ', parameters('vstsURL'), ' ', parameters('vstsAgentName'))]"
+    "bootstrapcmd": "[concat('sh ', variables('bootstrapfile'), parameters('postgresPassword'), ' ', parameters('postgresUserPassword'), ' ', parameters('vstsUsername'), ' ', parameters('vstsPassword'), ' ', parameters('vstsURL'), ' ', parameters('vstsAgentName'))]"
   },
   "resources": [
     {
@@ -242,11 +242,10 @@
           "imageReference": {
             "publisher": "[variables('imagePublisher')]",
             "offer": "[variables('imageOffer')]",
-            "sku": "[parameters('imageSKU')]",
-            "version": "[parameters('imageVersion')]"
+            "sku": "[variables('imageSKU')]",
+            "version": "[variables('imageVersion')]"
           },
           "osDisk": {
-            "osType": "Linux",
             "name": "osdisk",
             "vhd": {
               "uri": "[concat('http://', variables('vhdStorageName'), '.blob.core.windows.net/', variables('vhdStorageContainerName'), '/', variables('OSDiskName'), '.vhd')]"
@@ -307,7 +306,7 @@
           "properties": {
             "publisher": "Microsoft.OSTCExtensions",
             "type": "CustomScriptForLinux",
-            "typeHandlerVersion": "1.4.1.0",
+            "typeHandlerVersion": "1.4",
             "settings": {
               "fileUris": [ "[variables('bootstrapuri')]" ],
               "commandToExecute": "[variables('bootstrapcmd')]"
