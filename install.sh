@@ -15,7 +15,7 @@ docker run --name railsPostgres --restart=always -e POSTGRES_PASSWORD=${1} -d po
 sleep 20
 
 # Create an agent user in postgres
-dosql="CREATE ROLE agentUsr WITH LOGIN CREATEDB PASSWORD '${2}'"
+dosql="CREATE ROLE agentusr WITH LOGIN CREATEDB PASSWORD '${2}'"
 conn="postgresql://postgres:${1}@railsPostgres:5432"
 docker run -i --link railsPostgres:postgres --rm postgres sh -c "exec psql $conn -c \"$dosql\""
 
