@@ -12,9 +12,9 @@ docker pull postgres
 docker run --name railsPostgres --restart=always -e POSTGRES_PASSWORD=${1} -d postgres
 
 # Create an agent user in postgres
-pass="PASSWORD '${2}'"
+dosql="CREATE ROLE agentUsr WITH LOGIN CREATEDB PASSWORD '${2}'"
 conn="postgresql://postgres:${1}@railsPostgres:5432"
-docker run -i --link railsPostgres:postgres --rm postgres sh -c 'exec psql $conn -c "CREATE ROLE agentUsr WITH LOGIN CREATEDB $pass;"'
+docker run -i --link railsPostgres:postgres --rm postgres sh -c "exec psql $conn -c \"$dosql\""
 
 # Run agent docker container
 docker run -i --name vstsagent --restart=always --link railsPostgres:postgres \
