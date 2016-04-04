@@ -312,6 +312,31 @@
               "commandToExecute": "[variables('bootstrapcmd')]"
             }
           }
+        },
+        {
+          "type": "extensions",
+          "name": "patching",
+          "apiVersion": "[variables('apiVersion')]",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+          ],
+          "properties": {
+            "publisher": "Microsoft.OSTCExtensions",
+            "type": "OSPatchingForLinux",
+            "typeHandlerVersion": "2.3",
+            "settings": {},
+            "protectedSettings": {
+              "disabled" : "False",
+              "stop" : "False",
+              "rebootAfterPatch" : "Auto",
+              "intervalOfWeeks" : "1",
+              "dayOfWeek" : "Sunday|Wednesday",
+              "startTime" : "03:00",
+              "category" : "ImportantAndRecommended",
+              "installDuration" : "00:30"
+            }
+          }
         }
       ]
     }
