@@ -67,7 +67,6 @@
     }
   },
   "variables": {
-    "apiVersion": "2015-06-15",
     "imagePublisher": "Canonical",
     "imageOffer": "UbuntuServer",
     "imageSKU": "14.04.4-LTS",
@@ -82,6 +81,13 @@
     "publicIPAddressType": "Dynamic",
     "vhdStorageContainerName": "vhds",
     "vmSize": "Standard_D1_v2",
+    "automationAccountName": "Automation",
+    "automationAccountLocation": "eastus2",
+    "automationRunbookLoc": "https://raw.githubusercontent.com/JamesCarscadden/azure-automator-actions/master/",
+    "automationRunbookStopName": "Stop-VMs.ps1",
+    "automationRunbookStartName": "Start-VMs.ps1",
+    "automationStopRunbookUri": "[concat(variables('automationRunbookLoc'), variables('automationRunbookStopName'))]",
+    "automationStartRunbookUri": "[concat(variables('automationRunbookLoc'), variables('automationRunbookStartName'))]",
     "networkSecurityGroupName": "vmsg",
     "virtualNetworkName": "VNET",
     "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
@@ -107,19 +113,74 @@
   },
   "resources": [
     {
-      "apiVersion": "[variables('apiVersion')]",
+      "apiVersion": "2015-10-31",
+      "type": "Microsoft.Automation/automationAccounts",
+      "name": "[variables('automationAccountName')]",
+      "location": "[variables('automationAccountLocation')]",
+      "tags": {},
+      "properties": {
+        "sku": {
+          "name": "Free"
+        }
+      },
+      "resources": [
+        {
+          "apiVersion": "2015-10-31",
+          "type": "schedules",
+          "name": "DailyEndOfWork",
+          "location": "[variables('automationAccountLocation')]",
+          "tags": {},
+          "properties": {
+            "description":"Run every day at 9pm",
+            "startTime":"21:00:00",
+            "isEnabled":true,
+            "interval":1,
+            "frequency":"day"
+          },
+          "dependsOn": [
+            "[concat('Microsoft.Automation/automationAccounts/', variables('automationAccountName'))]"
+          ]
+        },
+        {
+          "apiVersion": "2015-10-31",
+          "type": "runbooks",
+          "name": "Stop-VMs",
+          "location": "[variables('automationAccountLocation')]",
+          "tags": {},
+          "properties": {
+            "runbookType": "PowerShellWorkflow",
+            "logProgress": "false",
+            "logVerbose": "false",
+            "description": "Stops all VMs in the Resource Group after hours",
+            "publishContentLink": {
+              "uri": "[variables('automationStopRunbookUri')]",
+              "version": "1.0.0.0"
+            }
+          },
+          "dependsOn": [
+            "[concat('Microsoft.Automation/automationAccounts/', variables('automationAccountName'))]",
+            "[concat('Microsoft.Automation/automationAccounts/', variables('automationAccountName'),'/schedules/DailyEndOfWork')]"
+          ]
+        }
+      ],
+      "dependsOn": []
+    },
+    {
+      "apiVersion": "2016-01-01",
       "type": "Microsoft.Storage/storageAccounts",
       "name": "[variables('vhdStorageName')]",
       "location": "[resourceGroup().location]",
       "tags": {
         "displayName": "StorageAccount"
       },
-      "properties": {
-        "accountType": "[variables('vhdStorageType')]"
-      }
+      "properties": {},
+      "sku": {
+        "name": "[variables('vhdStorageType')]"
+      },
+      "kind": "Storage"
     },
     {
-      "apiVersion": "[variables('apiVersion')]",
+      "apiVersion": "2016-03-30",
       "type": "Microsoft.Network/publicIPAddresses",
       "name": "[variables('publicIPAddressName')]",
       "location": "[resourceGroup().location]",
@@ -134,7 +195,7 @@
       }
     },
     {
-      "apiVersion": "[variables('apiVersion')]",
+      "apiVersion": "2016-03-30",
       "type": "Microsoft.Network/networkSecurityGroups",
       "name": "[variables('networkSecurityGroupName')]",
       "location": "[resourceGroup().location]",
@@ -158,7 +219,7 @@
       }
     },
     {
-      "apiVersion": "[variables('apiVersion')]",
+      "apiVersion": "2016-03-30",
       "type": "Microsoft.Network/virtualNetworks",
       "name": "[variables('virtualNetworkName')]",
       "location": "[resourceGroup().location]",
@@ -182,7 +243,7 @@
       }
     },
     {
-      "apiVersion": "[variables('apiVersion')]",
+      "apiVersion": "2016-03-30",
       "type": "Microsoft.Network/networkInterfaces",
       "name": "[variables('nicName')]",
       "location": "[resourceGroup().location]",
@@ -215,7 +276,7 @@
       }
     },
     {
-      "apiVersion": "[variables('apiVersion')]",
+      "apiVersion": "2016-03-30",
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[parameters('vmName')]",
       "location": "[resourceGroup().location]",
@@ -272,7 +333,7 @@
         {
           "type": "extensions",
           "name": "Microsoft.Insights.VMDiagnosticsSettings",
-          "apiVersion": "[variables('apiVersion')]",
+          "apiVersion": "2016-03-30",
           "location": "[resourceGroup().location]",
           "tags": {
             "displayName": "AzureDiagnostics"
@@ -298,7 +359,7 @@
         {
           "type": "extensions",
           "name": "installAgent",
-          "apiVersion": "[variables('apiVersion')]",
+          "apiVersion": "2016-03-30",
           "location": "[resourceGroup().location]",
           "dependsOn": [
             "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
@@ -316,7 +377,7 @@
         {
           "type": "extensions",
           "name": "patching",
-          "apiVersion": "[variables('apiVersion')]",
+          "apiVersion": "2016-03-30",
           "location": "[resourceGroup().location]",
           "dependsOn": [
             "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
