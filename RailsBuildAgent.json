@@ -69,7 +69,7 @@
   "variables": {
     "imagePublisher": "Canonical",
     "imageOffer": "UbuntuServer",
-    "imageSKU": "14.04.4-LTS",
+    "imageSKU": "16.04.0-LTS",
     "imageVersion": "latest",
     "OSDiskName": "osdisk",
     "nicName": "vmnic",
@@ -109,7 +109,7 @@
     "installloc": "https://raw.githubusercontent.com/JamesCarscadden/arm-agent-rails/master/",
     "bootstrapfile": "install.sh",
     "bootstrapuri": "[concat(variables('installloc'), variables('bootstrapfile'))]",
-    "bootstrapcmd": "[concat('sh ', variables('bootstrapfile'), ' ', parameters('postgresPassword'), ' ', parameters('postgresUserPassword'), ' ', parameters('vstsUsername'), ' ', parameters('vstsPassword'), ' ', parameters('vstsURL'), ' ', parameters('vstsAgentName'))]"
+    "bootstrapcmd": "[concat('sh ', variables('bootstrapfile'), ' ', parameters('adminUsername'), ' ', parameters('postgresPassword'), ' ', parameters('postgresUserPassword'), ' ', parameters('vstsUsername'), ' ', parameters('vstsPassword'), ' ', parameters('vstsURL'), ' ', parameters('vstsAgentName'))]"
   },
   "resources": [
     {
